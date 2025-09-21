@@ -19,8 +19,8 @@ export function ArtisanForm() {
     formState: { errors },
     watch,
     reset,
-  } = useForm<z.input<typeof ArtisanFormSchema>, any, ArtisanFormValues>({
-    resolver: zodResolver<z.input<typeof ArtisanFormSchema>, any, ArtisanFormValues>(ArtisanFormSchema),
+  } = useForm<z.input<typeof ArtisanFormSchema>, unknown, ArtisanFormValues>({
+    resolver: zodResolver<z.input<typeof ArtisanFormSchema>, unknown, ArtisanFormValues>(ArtisanFormSchema),
   });
 
   const imageFile = watch("image");
@@ -102,7 +102,7 @@ export function ArtisanForm() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
-            AI Artisan Assistant
+            Artisan Atlas
           </h1>
           <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
             Upload your product image and provide basic details. Our AI will analyze the image and generate comprehensive marketing strategies, SEO optimization, and content recommendations automatically.
@@ -315,6 +315,7 @@ export function ArtisanForm() {
                     Preview
                   </label>
                   <div className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={previewUrl}
                       alt="Product preview"

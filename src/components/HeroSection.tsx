@@ -1,11 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { Sparkles, Brain, Zap, Target } from "lucide-react";
 
 export function HeroSection() {
+  const prefersReducedMotion = useReducedMotion();
   const router = useRouter();
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -31,14 +31,7 @@ export function HeroSection() {
     },
   };
 
-  const floatingAnimation = {
-    y: [-10, 10, -10],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      ease: "easeInOut" as const,
-    },
-  };
+  // Note: floatingAnimation removed to reduce unused variables and lint warnings
 
   // Removed scroll indicator per request
 
@@ -61,23 +54,7 @@ export function HeroSection() {
             <motion.span 
               className="block text-white"
             >
-              AI Artisan
-            </motion.span>
-            <motion.span 
-              className="block bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent"
-              animate={{
-                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              style={{
-                backgroundSize: "200% 100%",
-              }}
-            >
-              Assistant
+              Artisan Atlas
             </motion.span>
           </div>
         </motion.h1>
@@ -107,8 +84,8 @@ export function HeroSection() {
             <motion.div
               key={feature.label}
               className="group cursor-pointer"
-              whileHover={{ scale: 1.05, y: -5 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              whileHover={prefersReducedMotion ? undefined : { scale: 1.05, y: -5 }}
+              transition={prefersReducedMotion ? undefined : { type: "spring", stiffness: 300 }}
             >
               <div className="relative">
                 <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} rounded-2xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300`}></div>
@@ -137,8 +114,8 @@ export function HeroSection() {
             <div className="relative flex items-center space-x-2">
               <span>Start Creating Magic</span>
               <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                animate={prefersReducedMotion ? undefined : { x: [0, 5, 0] }}
+                transition={prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity }}
               >
                 <Sparkles className="w-5 h-5" />
               </motion.div>

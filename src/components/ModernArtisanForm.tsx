@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArtisanFormSchema, type ArtisanFormValues } from "@/lib/validators/artisan";
 import type { z } from "zod";
 import { cn } from "@/lib/utils";
 import { MarketingResults } from "./MarketingResults";
-import { Upload, Image as ImageIcon, Sparkles, ArrowRight, Loader2, SlidersHorizontal, X, ArrowLeft } from "lucide-react";
 
 export function ModernArtisanForm() {
+  const prefersReducedMotion = useReducedMotion();
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
   const [marketingContent, setMarketingContent] = useState("");
@@ -33,8 +33,8 @@ export function ModernArtisanForm() {
     watch,
     reset,
     setValue,
-  } = useForm<z.input<typeof ArtisanFormSchema>, any, ArtisanFormValues>({
-    resolver: zodResolver<z.input<typeof ArtisanFormSchema>, any, ArtisanFormValues>(ArtisanFormSchema),
+  } = useForm<z.input<typeof ArtisanFormSchema>, unknown, ArtisanFormValues>({
+    resolver: zodResolver<z.input<typeof ArtisanFormSchema>, unknown, ArtisanFormValues>(ArtisanFormSchema),
   });
 
   const imageFile = watch("image");
@@ -69,21 +69,21 @@ export function ModernArtisanForm() {
   if (data.language) formData.append("language", data.language);
   if (data.audiencePersona) formData.append("audiencePersona", data.audiencePersona);
   if (data.storyNotes) formData.append("storyNotes", data.storyNotes);
-      // New optional fields
-      if (data.city) formData.append("city", data.city as any);
-      if (data.materials) formData.append("materials", data.materials as any);
-      if (data.technique) formData.append("technique", data.technique as any);
-      if (data.colorPalette) formData.append("colorPalette", data.colorPalette as any);
-      if (data.dimensions) formData.append("dimensions", data.dimensions as any);
-      if (data.capacity) formData.append("capacity", data.capacity as any);
-      if (data.fulfillmentOptions) formData.append("fulfillmentOptions", data.fulfillmentOptions as any);
-      if (data.deliveryRadiusKm) formData.append("deliveryRadiusKm", data.deliveryRadiusKm as any);
-      if (data.turnaroundTimeDays) formData.append("turnaroundTimeDays", data.turnaroundTimeDays as any);
-      if (data.customizable) formData.append("customizable", data.customizable as any);
-      if (data.sustainability) formData.append("sustainability", data.sustainability as any);
-      if (data.preferredChannels) formData.append("preferredChannels", data.preferredChannels as any);
-      if (data.listingGoal) formData.append("listingGoal", data.listingGoal as any);
-      if (data.stockStatus) formData.append("stockStatus", data.stockStatus as any);
+  // New optional fields
+  if (data.city) formData.append("city", data.city);
+  if (data.materials) formData.append("materials", data.materials);
+  if (data.technique) formData.append("technique", data.technique);
+  if (data.colorPalette) formData.append("colorPalette", data.colorPalette);
+  if (data.dimensions) formData.append("dimensions", data.dimensions);
+  if (data.capacity) formData.append("capacity", data.capacity);
+  if (data.fulfillmentOptions) formData.append("fulfillmentOptions", data.fulfillmentOptions);
+  if (data.deliveryRadiusKm) formData.append("deliveryRadiusKm", data.deliveryRadiusKm);
+  if (data.turnaroundTimeDays) formData.append("turnaroundTimeDays", data.turnaroundTimeDays);
+  if (data.customizable) formData.append("customizable", data.customizable);
+  if (data.sustainability) formData.append("sustainability", data.sustainability);
+  if (data.preferredChannels) formData.append("preferredChannels", data.preferredChannels);
+  if (data.listingGoal) formData.append("listingGoal", data.listingGoal);
+  if (data.stockStatus) formData.append("stockStatus", data.stockStatus);
       if (data.image && data.image[0]) {
         formData.append("image", data.image[0]);
       }
@@ -176,23 +176,28 @@ export function ModernArtisanForm() {
         whileInView="visible"
         viewport={{ once: true }}
       >
-        {/* Header row with Back button (left) and centered title */}
-          <motion.div variants={itemVariants} className="mb-12 grid grid-cols-3 items-center">
-            <div className="justify-self-start">
+        {/* Header row with Back button (left) and a centered, refined title */}
+        <motion.div variants={itemVariants} className="mb-10 grid grid-cols-3 items-center">
+          <div className="justify-self-start">
               <button
                 type="button"
                 onClick={handleBack}
                 className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/80 hover:text-white hover:bg-white/20 backdrop-blur-md shadow-md shadow-black/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50"
                 aria-label="Go back"
               >
-                <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                <i className="pi pi-arrow-left text-white/80 text-sm transition-transform duration-200 group-hover:-translate-x-0.5" aria-hidden="true" />
                 <span>Back</span>
               </button>
             </div>
-            <h2 className="justify-self-center text-center text-3xl sm:text-4xl font-bold text-white">
-              Upload & <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Analyze</span>
+          <div className="justify-self-center text-center relative">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-wide md:tracking-wider">
+              <span className="text-white">Upload</span>
+              <span className="mx-2 text-white">&</span>
+              <span className="text-white">Analyze</span>
             </h2>
-            <div className="justify-self-end" aria-hidden="true" />
+            <div className="pointer-events-none absolute left-0 right-0 -bottom-3 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          </div>
+          <div className="justify-self-end" aria-hidden="true" />
           </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -232,6 +237,7 @@ export function ModernArtisanForm() {
                       
                       {previewUrl ? (
                         <div className="relative">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={previewUrl}
                             alt="Product preview"
@@ -244,11 +250,11 @@ export function ModernArtisanForm() {
                       ) : (
                         <div className="text-center">
                           <motion.div
-                            animate={{ y: [0, -10, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
+                            animate={prefersReducedMotion ? undefined : { y: [0, -10, 0] }}
+                            transition={prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity }}
                             className="mx-auto mb-4"
                           >
-                            <Upload className="w-16 h-16 text-white/60 mx-auto" />
+                            <i className="pi pi-upload text-white/60 text-[3.5rem] mx-auto" aria-hidden="true" />
                           </motion.div>
                           <p className="text-white/80 text-lg font-medium mb-2">
                             Drop your image here or click to browse
@@ -280,7 +286,7 @@ export function ModernArtisanForm() {
                       onClick={() => setShowFilters(true)}
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white/80 hover:bg-white/20 transition"
                     >
-                      <SlidersHorizontal className="w-4 h-4" />
+                      <i className="pi pi-sliders-h text-white/80 text-sm" aria-hidden="true" />
                       Filters (optional)
                     </button>
                   </div>
@@ -302,12 +308,12 @@ export function ModernArtisanForm() {
                       <div className="relative flex items-center justify-center space-x-2">
                         {isGenerating ? (
                           <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <i className="pi pi-spinner pi-spin text-[20px]" aria-hidden="true" />
                             <span>Generating Magic...</span>
                           </>
                         ) : (
                           <>
-                            <Sparkles className="w-5 h-5" />
+                            <i className="pi pi-magic text-[18px]" aria-hidden="true" />
                             <span>Generate Marketing Analysis</span>
                           </>
                         )}
@@ -356,18 +362,18 @@ export function ModernArtisanForm() {
                   <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl rounded-3xl"></div>
                   <div className="relative border border-white/20 rounded-3xl p-8 text-center shadow-2xl">
                     <motion.div
-                      animate={{ 
+                      animate={prefersReducedMotion ? undefined : { 
                         scale: [1, 1.1, 1],
                         rotate: [0, 5, -5, 0] 
                       }}
-                      transition={{ 
+                      transition={prefersReducedMotion ? undefined : { 
                         duration: 4, 
                         repeat: Infinity,
                         ease: "easeInOut" 
                       }}
                       className="text-white/30 mb-6"
                     >
-                      <ImageIcon className="w-24 h-24 mx-auto" />
+                      <i className="pi pi-image text-[6rem] mx-auto" aria-hidden="true" />
                     </motion.div>
                     
                     <h3 className="text-2xl font-bold text-white/90 mb-4">
@@ -379,9 +385,9 @@ export function ModernArtisanForm() {
                     
                     <div className="mt-8 grid grid-cols-3 gap-4">
                       {[
-                        { icon: "🔍", label: "Image Analysis" },
-                        { icon: "📈", label: "SEO Optimization" },
-                        { icon: "✨", label: "Content Creation" },
+                        { iconClass: "pi pi-search", label: "Image Analysis" },
+                        { iconClass: "pi pi-chart-line", label: "SEO Optimization" },
+                        { iconClass: "pi pi-sparkles", label: "Content Creation" },
                       ].map((feature, index) => (
                         <motion.div
                           key={feature.label}
@@ -390,7 +396,7 @@ export function ModernArtisanForm() {
                           transition={{ delay: index * 0.2 }}
                           className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10"
                         >
-                          <div className="text-2xl mb-2">{feature.icon}</div>
+                          <i className={`${feature.iconClass} text-white/70 text-xl mb-2`} />
                           <div className="text-white/70 text-xs font-medium">{feature.label}</div>
                         </motion.div>
                       ))}
@@ -427,14 +433,19 @@ export function ModernArtisanForm() {
             >
               <div className="p-4 sticky top-0 bg-[#0b1020]/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-white/80">
-                  <SlidersHorizontal className="w-4 h-4" />
+                  <i className="pi pi-sliders-h text-white/80 text-sm" aria-hidden="true" />
                   <span className="font-semibold">Filters (optional)</span>
                 </div>
                 <button onClick={() => setShowFilters(false)} className="text-white/60 hover:text-white">
-                  <X className="w-5 h-5" />
+                  <i className="pi pi-times text-white text-base" aria-hidden="true" />
                 </button>
               </div>
-              <div className="p-4 space-y-3">
+              <div className="p-4 space-y-3 h-[calc(100vh-64px)] overflow-y-auto scroll-smooth [color-scheme:dark]
+                [&::-webkit-scrollbar]:w-2 
+                [&::-webkit-scrollbar-track]:bg-[#0b1020] 
+                [&::-webkit-scrollbar-thumb]:bg-white/10 
+                [&::-webkit-scrollbar-thumb]:rounded-full 
+                hover:[&::-webkit-scrollbar-thumb]:bg-white/20 ">
                 {/* We reuse RHF register so values persist and submit with main form */}
                 <div>
                   <label className="block text-white text-sm font-medium mb-1">Product Name</label>
@@ -494,13 +505,13 @@ export function ModernArtisanForm() {
                   <div>
                     <label className="block text-white text-sm font-medium mb-1">Fulfillment</label>
                     <select {...register("fulfillmentOptions")} className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 appearance-none">
-                      <option value="">Select option</option>
-                      <option value="pickup">Pickup</option>
-                      <option value="local-delivery">Local Delivery</option>
-                      <option value="shipping">Shipping</option>
-                      <option value="pickup-delivery">Pickup + Delivery</option>
-                      <option value="delivery-shipping">Delivery + Shipping</option>
-                      <option value="all">All</option>
+                      <option value="" className="bg-[#0b1020] text-white">Select option</option>
+                      <option value="pickup" className="bg-[#0b1020] text-white">Pickup</option>
+                      <option value="local-delivery" className="bg-[#0b1020] text-white">Local Delivery</option>
+                      <option value="shipping" className="bg-[#0b1020] text-white">Shipping</option>
+                      <option value="pickup-delivery" className="bg-[#0b1020] text-white">Pickup + Delivery</option>
+                      <option value="delivery-shipping" className="bg-[#0b1020] text-white">Delivery + Shipping</option>
+                      <option value="all" className="bg-[#0b1020] text-white">All</option>
                     </select>
                   </div>
                   <div>
@@ -516,9 +527,9 @@ export function ModernArtisanForm() {
                   <div>
                     <label className="block text-white text-sm font-medium mb-1">Customizable</label>
                     <select {...register("customizable")} className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 appearance-none">
-                      <option value="">Select</option>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
+                      <option value="" className="bg-[#0b1020] text-white">Select</option>
+                      <option value="yes" className="bg-[#0b1020] text-white">Yes</option>
+                      <option value="no" className="bg-[#0b1020] text-white">No</option>
                     </select>
                   </div>
                 </div>
@@ -526,30 +537,30 @@ export function ModernArtisanForm() {
                   <div>
                     <label className="block text-white text-sm font-medium mb-1">Sustainability</label>
                     <select {...register("sustainability")} className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 appearance-none">
-                      <option value="">Select</option>
-                      <option value="recycled">Recycled</option>
-                      <option value="organic">Organic</option>
-                      <option value="low-waste">Low-waste</option>
-                      <option value="none">None</option>
+                      <option value="" className="bg-[#0b1020] text-white">Select</option>
+                      <option value="recycled" className="bg-[#0b1020] text-white">Recycled</option>
+                      <option value="organic" className="bg-[#0b1020] text-white">Organic</option>
+                      <option value="low-waste" className="bg-[#0b1020] text-white">Low-waste</option>
+                      <option value="none" className="bg-[#0b1020] text-white">None</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-white text-sm font-medium mb-1">Listing Goal</label>
                     <select {...register("listingGoal")} className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 appearance-none">
-                      <option value="">Select</option>
-                      <option value="sales">Sales</option>
-                      <option value="leads">Leads</option>
-                      <option value="awareness">Awareness</option>
+                      <option value="" className="bg-[#0b1020] text-white">Select</option>
+                      <option value="sales" className="bg-[#0b1020] text-white">Sales</option>
+                      <option value="leads" className="bg-[#0b1020] text-white">Leads</option>
+                      <option value="awareness" className="bg-[#0b1020] text-white">Awareness</option>
                     </select>
                   </div>
                 </div>
                 <div>
                   <label className="block text-white text-sm font-medium mb-1">Stock Status</label>
                   <select {...register("stockStatus")} className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 appearance-none">
-                    <option value="">Select</option>
-                    <option value="ready-to-ship">Ready to ship</option>
-                    <option value="made-to-order">Made to order</option>
-                    <option value="limited-stock">Limited stock</option>
+                    <option value="" className="bg-[#0b1020] text-white">Select</option>
+                    <option value="ready-to-ship" className="bg-[#0b1020] text-white">Ready to ship</option>
+                    <option value="made-to-order" className="bg-[#0b1020] text-white">Made to order</option>
+                    <option value="limited-stock" className="bg-[#0b1020] text-white">Limited stock</option>
                   </select>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

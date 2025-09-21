@@ -5,7 +5,9 @@ export const runtime = "nodejs";
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
 // Function to convert file to generative part
-async function fileToGenerativePart(file: File) {
+type InlineDataPart = { inlineData: { data: string; mimeType: string } };
+type TextPart = { text: string };
+async function fileToGenerativePart(file: File): Promise<InlineDataPart> {
   const arrayBuffer = await file.arrayBuffer();
   const base64EncodedData = Buffer.from(arrayBuffer).toString("base64");
   return {
@@ -232,8 +234,8 @@ export async function POST(req: Request) {
         {
           role: "user",
           parts: [
-            { text: prompt },
-            imagePart as any,
+            { text: prompt } as TextPart,
+            imagePart,
           ],
         },
       ],
